@@ -204,7 +204,7 @@ class XBRLParser(object):
             ignore_errors, logger, context_ids)
 
         current_assets = \
-            xbrl.find_all(name=re.compile("(us-gaap:)[^s]*(currentassets)",
+            xbrl.find_all(name=re.compile("(us-gaap:assetscurrent)",
                           re.IGNORECASE | re.MULTILINE))
         gaap_obj.current_assets = self.data_processing(current_assets,
             xbrl, ignore_errors, logger, context_ids)
@@ -235,8 +235,7 @@ class XBRLParser(object):
                 logger, context_ids)
 
         current_liabilities = \
-            xbrl.find_all(name=re.compile("(us-gaap:)[^s]\
-                          *(currentliabilities)",
+            xbrl.find_all(name=re.compile("(us-gaap:liabilitiescurrent)",
                           re.IGNORECASE | re.MULTILINE))
         gaap_obj.current_liabilities = \
             self.data_processing(current_liabilities, xbrl,
