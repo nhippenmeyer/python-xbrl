@@ -728,14 +728,8 @@ class XBRLParser(object):
 
             if len(elements) > 0 and XBRLParser().is_number(elements[0].text):
                 decimals = elements[0].attrs['decimals']
-                if decimals is not None:
-                    attr_precision = decimals
-                    if xbrl.precision != 0 \
-                    and xbrl.precison != attr_precision:
-                        xbrl.precision = attr_precision
                 if elements:
-                    return XBRLParser().trim_decimals(elements[0].text,
-                        int(xbrl.precision))
+                    return float(elements[0].text)
                 else:
                     return 0
             else:
