@@ -580,6 +580,13 @@ class XBRLParser(object):
             self.data_processing(common_shares_authorized, xbrl,
                                  ignore_errors, logger, context_ids)
 
+        earnings_per_share_diluted = \
+            xbrl.find_all(name=re.compile("(us-gaap:earningspersharediluted)",
+                          re.IGNORECASE | re.MULTILINE))
+        gaap_obj.earnings_per_share_diluted = \
+            self.data_processing(earnings_per_share_diluted, xbrl,
+                                 ignore_errors, logger, context_ids)
+
         return gaap_obj
 
     @classmethod
@@ -831,7 +838,8 @@ class GAAP(object):
                  net_cash_flows_discontinued=0.0,
                  common_shares_outstanding=0.0,
                  common_shares_issued=0.0,
-                 common_shares_authorized=0.0):
+                 common_shares_authorized=0.0,
+                 earnings_per_share_diluted=0.0):
         self.assets = assets
         self.current_assets = current_assets
         self.non_current_assets = non_current_assets
@@ -887,6 +895,7 @@ class GAAP(object):
         self.common_shares_outstanding = common_shares_outstanding
         self.common_shares_issued = common_shares_issued
         self.common_shares_authorized = common_shares_authorized
+        self.earnings_per_share_diluted = earnings_per_share_diluted
 
 
 class GAAPSerializer(Schema):
@@ -939,6 +948,7 @@ class GAAPSerializer(Schema):
     common_shares_outstanding = fields.Number()
     common_shares_issued = fields.Number()
     common_shares_authorized = fields.Number()
+    earnings_per_share_diluted = fields.Number()
 
 
 # Base DEI object
