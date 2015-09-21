@@ -198,13 +198,13 @@ class XBRLParser(object):
         except IndexError:
             raise XBRLParserException('problem getting contexts')
 
-        assets = xbrl.find_all(name=re.compile("(us-gaap:)[^s]*(assets)",
+        assets = xbrl.find_all(name=re.compile("(us-gaap:assets$)",
                                re.IGNORECASE | re.MULTILINE))
         gaap_obj.assets = self.data_processing(assets, xbrl,
             ignore_errors, logger, context_ids)
 
         current_assets = \
-            xbrl.find_all(name=re.compile("(us-gaap:assetscurrent)",
+            xbrl.find_all(name=re.compile("(us-gaap:assetscurrent$)",
                           re.IGNORECASE | re.MULTILINE))
         gaap_obj.current_assets = self.data_processing(current_assets,
             xbrl, ignore_errors, logger, context_ids)
@@ -228,14 +228,14 @@ class XBRLParser(object):
                 ignore_errors, logger, context_ids)
 
         liabilities = \
-            xbrl.find_all(name=re.compile("(us-gaap:)[^s]*(liabilities)",
+            xbrl.find_all(name=re.compile("(us-gaap:liabilities$)",
                           re.IGNORECASE | re.MULTILINE))
         gaap_obj.liabilities = \
             self.data_processing(liabilities, xbrl, ignore_errors,
                 logger, context_ids)
 
         current_liabilities = \
-            xbrl.find_all(name=re.compile("(us-gaap:liabilitiescurrent)",
+            xbrl.find_all(name=re.compile("(us-gaap:liabilitiescurrent$)",
                           re.IGNORECASE | re.MULTILINE))
         gaap_obj.current_liabilities = \
             self.data_processing(current_liabilities, xbrl,
@@ -581,25 +581,53 @@ class XBRLParser(object):
                                  ignore_errors, logger, context_ids)
 
         earnings_per_share_basic = \
-            xbrl.find_all(name=re.compile("(us-gaap:earningspersharebasic)",
+            xbrl.find_all(name=re.compile("(us-gaap:earningspersharebasic$)",
                           re.IGNORECASE | re.MULTILINE))
         gaap_obj.earnings_per_share_basic = \
             self.data_processing(earnings_per_share_basic, xbrl,
                                  ignore_errors, logger, context_ids)
 
         earnings_per_share_diluted = \
-            xbrl.find_all(name=re.compile("(us-gaap:earningspersharediluted)",
+            xbrl.find_all(name=re.compile("(us-gaap:earningspersharediluted$)",
                           re.IGNORECASE | re.MULTILINE))
         gaap_obj.earnings_per_share_diluted = \
             self.data_processing(earnings_per_share_diluted, xbrl,
                                  ignore_errors, logger, context_ids)
 
-        common_stock_dividends_per_share_declared = \
-            xbrl.find_all(name=re.compile("(us-gaap:commonstockdividendspersharedeclared)",
+        common_stock_dividends_per_share = \
+            xbrl.find_all(name=re.compile("(us-gaap:commonstockdividendspersharedeclared$)",
                           re.IGNORECASE | re.MULTILINE))
-        gaap_obj.common_stock_dividends_per_share_declared = \
-            self.data_processing(common_stock_dividends_per_share_declared, xbrl,
+        gaap_obj.common_stock_dividends_per_share = \
+            self.data_processing(common_stock_dividends_per_share, xbrl,
                                  ignore_errors, logger, context_ids)
+
+        weighted_average_number_of_shares_outstanding_basic = \
+            xbrl.find_all(name=re.compile(
+                          "(us-gaap:weightedaveragenumberofsharesoutstandingbasic$)",
+                          re.IGNORECASE | re.MULTILINE))
+        gaap_obj.weighted_average_number_of_shares_outstanding_basic = \
+            self.data_processing(weighted_average_number_of_shares_outstanding_basic,
+                                 xbrl, ignore_errors, logger, context_ids)
+
+        weighted_average_number_of_shares_outstanding_diluted = \
+            xbrl.find_all(name=re.compile(
+                          "(us-gaap:weightedaveragenumberofdilutedsharesoutstanding$)",
+                          re.IGNORECASE | re.MULTILINE))
+        gaap_obj.weighted_average_number_of_shares_outstanding_diluted = \
+            self.data_processing(weighted_average_number_of_shares_outstanding_diluted,
+                                 xbrl, ignore_errors, logger, context_ids)
+
+        net_sales = \
+            xbrl.find_all(name=re.compile("(us-gaap:salesrevenuenet$)",
+                          re.IGNORECASE | re.MULTILINE))
+        gaap_obj.net_sales = \
+            self.data_processing(net_sales, xbrl, ignore_errors, logger, context_ids)
+
+        long_term_debt = \
+            xbrl.find_all(name=re.compile("(us-gaap:longtermdebt$)",
+                          re.IGNORECASE | re.MULTILINE))
+        gaap_obj.long_term_debt = \
+            self.data_processing(long_term_debt, xbrl, ignore_errors, logger, context_ids)
 
         return gaap_obj
 
@@ -849,7 +877,11 @@ class GAAP(object):
                  common_shares_authorized=0.0,
                  earnings_per_share_basic=0.0,
                  earnings_per_share_diluted=0.0,
-                 common_stock_dividends_per_share_declared=0.0):
+                 common_stock_dividends_per_share=0.0,
+                 weighted_average_number_of_shares_outstanding_basic=0,
+                 weighted_average_number_of_shares_outstanding_diluted=0,
+                 net_sales=0.0,
+                 long_term_debt=0.0):
         self.assets = assets
         self.current_assets = current_assets
         self.non_current_assets = non_current_assets
@@ -907,7 +939,13 @@ class GAAP(object):
         self.common_shares_authorized = common_shares_authorized
         self.earnings_per_share_basic = earnings_per_share_basic
         self.earnings_per_share_diluted = earnings_per_share_diluted
-        self.common_stock_dividends_per_share_declared = common_stock_dividends_per_share_declared
+        self.common_stock_dividends_per_share = common_stock_dividends_per_share
+        self.weighted_average_number_of_shares_outstanding_basic = \
+            weighted_average_number_of_shares_outstanding_basic
+        self.weighted_average_number_of_shares_outstanding_diluted = \
+            weighted_average_number_of_shares_outstanding_diluted
+        self.net_sales = net_sales
+        self.long_term_debt = long_term_debt
 
 
 class GAAPSerializer(Schema):
@@ -962,7 +1000,11 @@ class GAAPSerializer(Schema):
     common_shares_authorized = fields.Number()
     earnings_per_share_basic = fields.Number()
     earnings_per_share_diluted = fields.Number()
-    common_stock_dividends_per_share_declared = fields.Number()
+    common_stock_dividends_per_share = fields.Number()
+    weighted_average_number_of_shares_outstanding_basic = fields.Integer()
+    weighted_average_number_of_shares_outstanding_diluted = fields.Integer()
+    net_sales = fields.Number()
+    long_term_debt = fields.Number()
 
 
 # Base DEI object
