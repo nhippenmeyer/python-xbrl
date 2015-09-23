@@ -762,13 +762,9 @@ class XBRLParser(object):
             elements = correct_elements
 
             if len(elements) > 0 and XBRLParser().is_number(elements[0].text):
-                decimals = elements[0].attrs['decimals']
-                if elements:
-                    return float(elements[0].text)
-                else:
-                    return 0
+                return float(elements[0].text)
             else:
-                return 0
+                return None
         except Exception as e:
             if ignore_errors == 0:
                 raise XBRLParserException('value extraction error')
